@@ -1,0 +1,78 @@
+
+cp command:
+
+ubuntu@ubuntu:~/Documents/OS Labs$ cp lab4_code/lib/a/lab4_my_sum_int.c lab4_code/lib/a lab4_my_sum_int_main.c Lab4/lib/a
+ubuntu@ubuntu:~/Documents/OS Labs$ cp lab4_code/lib/so/lab4_my_sum_int.c lab4_code/lib/so/lab4_my_sum_int_main.c Lab4/lib/so
+
+
+.a file:
+
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4$ cd lib/a
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ gcc -c -fPIC -o libmy_sum_int.a lab4_my_sum_int.c
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ ls
+lab4_my_sum_int.c  lab4_my_sum_int_main.c  libmy_sum_int.a
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ ls -l *.a
+-rw-rw-r-- 1 ubuntu ubuntu 2200 Aug 28 12:23 libmy_sum_int.a
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ ls *.a
+libmy_sum_int.a
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ pwd
+/home/ubuntu/Documents/OS Labs/Lab4/lib/a
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ ^C
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ gcc -L/home/ubuntu/Documents/OS Labs/Lab4/lib/a -o my_sum_int lab4_my_sum_int_main.c -lmy_sum_int
+/usr/bin/ld: cannot find Labs/Lab4/lib/a: No such file or directory
+/usr/bin/ld: cannot find -lmy_sum_int: No such file or directory
+collect2: error: ld returned 1 exit status
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ gcc '-L/home/ubuntu/Documents/OS Labs/Lab4/lib/a' -o my_sum_int lab4_my_sum_int_main.c -lmy_sum_int
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ ./my_sum_int
+OS_SS-Lab 4: Demo of developing static library.
+my_sum_int_main: static var address: 0x561374363010
+my_sum_int_main: main() code address: 0x561374360189
+my_sum_int: static var address: 0x561374363014
+my_sum_int: my_sum_int() code address: 0x56137436022a
+Sum  = 55
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/a$ 
+
+.so file:
+gcc -o my_sum_int '-L/home/ubuntu/Documents/OS Labs/Lab4/lib/so' lab4_my_sum_int_main.c -lmy_sum_int
+
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ gcc -c -fPIC lab4_my_sum_int.c
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ ls
+lab4_my_sum_int.c  lab4_my_sum_int.o  lab4_my_sum_int_main.c
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ gcc -shared -o libmy_sum_int.so lab4_my_sum_int.o
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ ls
+lab4_my_sum_int.c  lab4_my_sum_int.o  lab4_my_sum_int_main.c  libmy_sum_int.so
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ 
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ 
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ pwd
+/home/ubuntu/Documents/OS Labs/Lab4/lib/so
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ export LD_LIBRARY_PATH = '/home/ubuntu/Documents/OS Labs/Lab4/lib/so'
+bash: export: `=': not a valid identifier
+bash: export: `/home/ubuntu/Documents/OS Labs/Lab4/lib/so': not a valid identifier
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ export LD_LIBRARY_PATH='/home/ubuntu/Documents/OS Labs/Lab4/lib/so'
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ echo $DL_LIBRARY_PATH
+
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ echo $LD_LIBRARY_PATH
+/home/ubuntu/Documents/OS Labs/Lab4/lib/so
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ gcc -o my_sum_int '-L/home/ubuntu/Documents/OS Labs/Lab4/lib/so' lab4_my_sum_int_main.c -lmy_sum_int
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ ./my_sum_int
+OS_SS-Lab 4: Demo of developing shared object library.
+my_sum_int_main: static var address: 0x55eae6150010
+my_sum_int_main: main() code address: 0x55eae614d189
+my_sum_int: static var address: 0x7f0a4aa9c030
+my_sum_int: my_sum_int() code address: 0x7f0a4aa99139
+Sum  = 55
+I am going to run forever!!!
+
+
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4$ cd lib/so
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ ps -all
+F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+4 S   999    2391    2384  2  80   0 - 426214 ep_pol tty2    00:05:16 Xorg
+4 S   999    2560    2384  0  80   0 - 58028 do_pol tty2     00:00:00 gnome-session-b
+4 R   999   23526   23340 99  80   0 -   698 -      pts/1    00:13:37 my_sum_int
+4 R   999   23838   23528  0  80   0 -  5429 -      pts/3    00:00:00 ps
+ubuntu@ubuntu:~/Documents/OS Labs/Lab4/lib/so$ objdump -p my_sum_int | grep NEEDED
+  NEEDED               libmy_sum_int.so
+  NEEDED               libc.so.6
+
+
