@@ -4,4 +4,4 @@ read commit_message
 git commit -m "$commit_message"
 
 git branch -M main
-pit push -u origin main
+git push -u origin main
